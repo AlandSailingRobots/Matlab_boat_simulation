@@ -54,3 +54,5 @@ ___________
 		 - calculate_potField
         Use of detect_nearest_obstacle to fix the issue on collisionnedObstacle
         Currently the boat in bearing only mode is sailing through a wall of obstacle
+
+     - Backup version
