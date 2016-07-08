@@ -7,20 +7,22 @@ ___________
 
 1. To launch the simulation : 
 
-	 just launch collision_avoidance_sailing_boat_main.m
+  just launch `collision_avoidance_sailing_boat_main.m`  
+  
 ___________
 
 2. To setup waypoints :
-
  * Use click_to_pos.m and modify
-   - **waypoints.mat** for waypoints
-   - **sailing_zone.mat** for the sailing_zone borders
-   - **obstacles.mat** for the obstacles. When the matrix is created, it appear in the map folder. You need to move it to the **Waypoint_matrix_and_associated_tools folder**.
+   - `waypoints.mat` for waypoints
+    - `sailing_zone.mat` for the sailing_zone borders
+    - `obstacles.mat` for the obstacles. When the matrix is created, it appear in the map folder. You need to move it to the `Waypoint_matrix_and_associated_tools folder`.
 
   Or change it in the code in collision_avoidance_sailing_boat_main.m in the world variables section.
 ___________
 
-3. To modify values for the following_line algorithm you need to modify them inside the function **follow_line.m**.
+3. To modify values for the following_line algorithm
+
+  You need to modify them inside the function `follow_line.m`.  
 ___________
 
 4. Explanation of the variables : 
