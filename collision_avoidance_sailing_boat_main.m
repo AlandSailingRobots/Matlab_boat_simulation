@@ -75,7 +75,7 @@ function collision_avoidance_sailing_boat_main
         draw_pot(Z);
         
         %% Boat
-        draw_arrow(x(1)+10,x(2)+10,psi,5*awind,'red');
+        draw_arrow(x(1),x(2),psi,5*awind,'red');
         plot(hull(1,:),hull(2,:),'black');       
         plot(sail(1,:),sail(2,:),'red');       
         plot(rudder(1,:),rudder(2,:),'red');
@@ -133,22 +133,22 @@ function collision_avoidance_sailing_boat_main
         %% no-go zone
         xngzIN1=x(1:2)+10*[cos(psi+pi+ngzAngle);sin(psi+pi+ngzAngle)];
         xngzIN2=x(1:2)+10*[cos(psi+pi-ngzAngle);sin(psi+pi-ngzAngle)];
-        plot([x(1)+10;xngzIN1(1)+10],[x(2)+10;xngzIN1(2)+10],'red','Linewidth',1);
-        plot([x(1)+10;xngzIN2(1)+10],[x(2)+10;xngzIN2(2)+10],'red','Linewidth',1);
+        plot([x(1);xngzIN1(1)],[x(2);xngzIN1(2)],'red','Linewidth',1);
+        plot([x(1);xngzIN2(1)],[x(2);xngzIN2(2)],'red','Linewidth',1);
         
-        xngzBACK1=x(1:2)+10*[cos(psi+ngzAngleBack);sin(psi+ngzAngleBack)];
-        xngzBACK2=x(1:2)+10*[cos(psi-ngzAngleBack);sin(psi-ngzAngleBack)];
-        plot([x(1)+10;xngzBACK1(1)+10],[x(2)+10;xngzBACK1(2)+10],'red','Linewidth',1);
-        plot([x(1)+10;xngzBACK2(1)+10],[x(2)+10;xngzBACK2(2)+10],'red','Linewidth',1);
+%         xngzBACK1=x(1:2)+10*[cos(psi+ngzAngleBack);sin(psi+ngzAngleBack)];
+%         xngzBACK2=x(1:2)+10*[cos(psi-ngzAngleBack);sin(psi-ngzAngleBack)];
+%         plot([x(1)+10;xngzBACK1(1)],[x(2)+10;xngzBACK1(2)+10],'red','Linewidth',1);
+%         plot([x(1)+10;xngzBACK2(1)],[x(2)+10;xngzBACK2(2)+10],'red','Linewidth',1);
         
-%         %NOGOZone OUT
-%         xngzOUT1=x(1:2)+20*[cos(psi+pi+ngzAngleOUT);sin(psi+pi+ngzAngleOUT)];
-%         xngzOUT2=x(1:2)+20*[cos(psi+pi-ngzAngleOUT);sin(psi+pi-ngzAngleOUT)];
-%         plot([x(1);xngzOUT1(1)],[x(2);xngzOUT1(2)],'black','Linewidth',2);
-%         plot([x(1);xngzOUT2(1)],[x(2);xngzOUT2(2)],'black','Linewidth',2);
+        %NOGOZone OUT
+        xngzOUT1=x(1:2)+10*[cos(psi+pi+ngzAngleOUT);sin(psi+pi+ngzAngleOUT)];
+        xngzOUT2=x(1:2)+10*[cos(psi+pi-ngzAngleOUT);sin(psi+pi-ngzAngleOUT)];
+        plot([x(1);xngzOUT1(1)],[x(2);xngzOUT1(2)],'black','Linewidth',2);
+        plot([x(1);xngzOUT2(1)],[x(2);xngzOUT2(2)],'black','Linewidth',2);
         
         %% WantedHeading
-%         draw_arrow(x(1),x(2),thetabar,20,'black');
+        draw_arrow(x(1),x(2),theta_star,20,'black');
         
         %% Detectionsquare
         if(followedLine(:,1)~=avoidCollisionPoint)
@@ -217,9 +217,9 @@ function collision_avoidance_sailing_boat_main
 
     % Init state
     boatSpeed = 5;
-    posIniBoatX = -30;
-    posIniBoatY = 30;
-    headingIniBoat = (270)/180*pi;
+    posIniBoatX = 40;
+    posIniBoatY = 0;
+    headingIniBoat = (0)/180*pi;
     x0 = [posIniBoatX;posIniBoatY;headingIniBoat;boatSpeed;0]; x = x0; %x=(x,y,theta,v,w)
     u0 = [-0.1;0.02]; u = u0; % input
     
@@ -227,7 +227,7 @@ function collision_avoidance_sailing_boat_main
         % To modify this you need to go into the following line function
     ngzAngle = pi/4;
     ngzAngleBack = 0;
-%     ngzAngleOUT = ngzAngle+pi/8
+    ngzAngleOUT = ngzAngle+pi/8;
 
     r = 5;    % radius of the corridor in which the boat is supposed to stay when following a line
     thetabar = 0;
@@ -283,8 +283,8 @@ function collision_avoidance_sailing_boat_main
     
     % -- For other simulations --
 %     posWaypoints = gps_waypoints;
-    posWaypoints=[-30  50 ; %chain of waypoints
-                   30 -50];
+    posWaypoints=[10 -20 ; %chain of waypoints
+                  0 0];
 %     posWaypoints=[ 30 -40 -20; %chain of waypoints
 %                    0   5 -15];
 
@@ -294,10 +294,10 @@ function collision_avoidance_sailing_boat_main
     % -- Obstacle --
     
 %     posObstacles = gps_obstacles;
-%     posObstacles = [50 10 45 80;
-%                     50 10 65 75];
-    posObstacles = create_wall([-10;-10],...
-                               [ 0; 0],0.5); % Real points to avoid
+    posObstacles = [50 10 45 80;
+                    50 10 65 75];
+%     posObstacles = create_wall([-10;-10],...
+%                                [ 0; 0],0.5); % Real points to avoid
 %     posObstacles = [0;0];
 
 
@@ -371,7 +371,8 @@ function collision_avoidance_sailing_boat_main
             (x,phat,followedLine,avoidMode,collisionnedObstacle, ...
              posWaypoints,nWayP,r ...
             );
-        play = checkEndSimu(x,phat,posWaypoints,r);
+%         play = checkEndSimu(x,phat,posWaypoints,r);
+        play = 1;
         
         % Avoid script
         [avoidCollisionPoint,followedLine,avoidMode,Z] = avoid_obstacle ...
@@ -381,7 +382,7 @@ function collision_avoidance_sailing_boat_main
             ); % using global var
         
         % Command
-        [u,q,NGZmode]=follow_line(x,q,psi,followedLine,NGZmode);
+        [u,q,NGZmode,theta_star]=follow_line(x,q,psi,followedLine,NGZmode);
         
         % Simulation
         if(isempty(vObs)==0)

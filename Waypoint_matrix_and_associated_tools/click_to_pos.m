@@ -17,20 +17,23 @@ load([PathName,gps_cal_data])
 h = figure(5); 
 imshow(img);hold on;
 title('Line : Return to continue, 1 to end selection');
-X = []; Y = [];
+X = []; Y = []; Time = []
 go_on = 1;
 while( go_on == 1)
     [x,y] = ginput(1);
     X = [X x];
     Y = [Y y];
+    time = input('How much time in sec the boat must stay inside >>> ');
+    text(x+10,y+10,[num2str(time) 'sec']);
     plot(X,Y,'-ored');
+    Time = [Time time];
     in = input('Return to continue, 1 to end selection >>> ');
     if(in == 1)
         go_on = 0;
     end
 end
 hold off;
-x = X; y = Y; 
+x = X; y = Y; time = Time;
 close all;
 
 utm_x = (x-x1)*x_m_pix_ratio+utm_x_1;
@@ -49,7 +52,7 @@ text = char(answer(1));
 
 
 saveText  = sprintf('%s%s.mat',PathName,text);
-save(saveText,'utm_x','utm_y','lat_out','long_out');
+save(saveText,'time','utm_x','utm_y','lat_out','long_out');
 
 imshow(img);
 hold on
