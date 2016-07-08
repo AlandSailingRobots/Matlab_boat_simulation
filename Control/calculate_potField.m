@@ -1,5 +1,6 @@
     % Potential field computation
-    function Z=calculate_potField(P1,P2,x,phat,qhat,sailingZone,psi) 
+    function Z=calculate_potField(haveToAvoidObstacle,headingOnlyMode,P1,P2,...
+                    x,phat,qhat,rq,bearingDetectedObstacle,sailingZone,psi) 
         %% Init
         windHeading = psi;
         % Obstacle and objective definition
@@ -8,36 +9,54 @@
         boatHeading = x(3);
 
         %% Obstacle potential function
-        if(isempty(qhat)==1)
-            ObsP=[];
-        else
-            ObsP=P1*0;
-            
-            scaleHole = 50;
-            scalePike = 550;
-            scale = 0.5;
-            strengthHoles = 2;
-            strengthPike = 4;
-            strength = 5;
-            offsetObstacle = 15;
-            % Add the pikes
-            for i=1:size(qhat,2)
-                xObs = P1-qhat(1,i);
-                yObs = P2-qhat(2,i);
-                tPike = ((xObs*1).^2+(yObs-offsetObstacle*scale).^2)/scalePike/scale;
-                ObsP = max(ObsP, strength*strengthPike*exp(-(tPike).^2));
-            end
-            % Then add the holes
-            for i=1:size(qhat,2)
-                T = mod(boatHeading,2*pi)*0.3 + mod( atan2(phat(2)-qhat(2,i),phat(1)-qhat(1,i)) ,2*pi)*0.7 + pi/2;
-                xObs = P1-qhat(1,i);
-                yObs = P2-qhat(2,i);
-                xo =  xObs*cos(T) + yObs*sin(T);
-                yo = -xObs*sin(T) + yObs*cos(T);
-                tHoleR = ((xo-35*scale).^2+(yo-offsetObstacle*scale).^2)/scaleHole/scale;
-                tHoleL = ((xo+35*scale).^2+(yo-offsetObstacle*scale).^2)/scaleHole/scale;
+        if(headingOnlyMode==0)
+            if(isempty(qhat)==1)
+                ObsP=[];
+            else
+                ObsP=P1*0;
 
-                ObsP = ObsP - strength*strengthHoles*exp(-(tHoleR).^2) - strength*strengthHoles*exp(-(tHoleL).^2);
+                scaleHole = 50;
+                scalePike = 550;
+                scale = 0.5;
+                strengthHoles = 2;
+                strengthPike = 4;
+                strength = 5;
+                offsetObstacle = 15;
+                % Add the pikes
+                for i=1:size(qhat,2)
+                    xObs = P1-qhat(1,i);
+                    yObs = P2-qhat(2,i);
+                    tPike = ((xObs*1).^2+(yObs-offsetObstacle*scale).^2)/scalePike/scale;
+                    ObsP = max(ObsP, strength*strengthPike*exp(-(tPike).^2));
+                end
+                % Then add the holes
+                for i=1:size(qhat,2)
+                    T = mod(boatHeading,2*pi)*0.3 + mod( atan2(phat(2)-qhat(2,i),phat(1)-qhat(1,i)) ,2*pi)*0.7 + pi/2;
+                    xObs = P1-qhat(1,i);
+                    yObs = P2-qhat(2,i);
+                    xo =  xObs*cos(T) + yObs*sin(T);
+                    yo = -xObs*sin(T) + yObs*cos(T);
+                    tHoleR = ((xo-35*scale).^2+(yo-offsetObstacle*scale).^2)/scaleHole/scale;
+                    tHoleL = ((xo+35*scale).^2+(yo-offsetObstacle*scale).^2)/scaleHole/scale;
+
+                    ObsP = ObsP - strength*strengthHoles*exp(-(tHoleR).^2) - strength*strengthHoles*exp(-(tHoleL).^2);
+                end
+            end
+        else
+            if(haveToAvoidObstacle==0)
+                ObsP=[];
+            else
+                eta = 3;
+                
+                bearingObstacle=x(3)+bearingDetectedObstacle-pi/2;
+                lengthObstacle=rq*eta;
+                x1 = P1-x(1);
+                y1 = P2-x(2);
+
+                xb =  x1*cos(bearingObstacle) + y1*sin(bearingObstacle);
+                yb = -x1*sin(bearingObstacle) + y1*cos(bearingObstacle);
+%                 intero=rectangularPulse(-lengthObstacle,lengthObstacle,xb);
+                ObsP = 15*rectangularPulse(-lengthObstacle,lengthObstacle,xb).*heaviside(yb)-5*rectangularPulse(-lengthObstacle*2,lengthObstacle*2,xb).*heaviside(yb);
             end
         end
 

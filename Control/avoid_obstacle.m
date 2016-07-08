@@ -1,11 +1,21 @@
-function [avoidCollisionPoint,followedLine,avoidMode,Z] = avoid_obstacle(avoidMode,followedLine,collisionnedObstacle,avoidCollisionPoint,sailingZone,qhat,phat,x,P1a,P2a,psi,rq,r,dim,Z)
-
+function [avoidCollisionPoint,followedLine,avoidMode,Z] = ...
+          avoid_obstacle( ...
+                haveToAvoidObstacle,headingOnlyMode,avoidMode,followedLine, ... 
+                collisionnedObstacle,bearingDetectedObstacle,...
+                avoidCollisionPoint,sailingZone,qhat,phat,x,P1a,P2a,psi,...
+                rq,r,dim,Z ...
+                )
+    
     if(isempty(qhat)==0 && isempty(collisionnedObstacle)==0 && avoidMode==0)
 
-        Z=calculate_potField(P1a,P2a,x,phat,qhat,sailingZone,psi);
+        Z=calculate_potField(haveToAvoidObstacle,headingOnlyMode,P1a,P2a,x,phat,qhat,rq,bearingDetectedObstacle,sailingZone,psi);
         avoidCollisionPoint = calculate_avoidCollisionPoint(Z,dim);
 %         avoidDist = 1;
-        avoidDist = (norm(collisionnedObstacle-x(1:2))+rq+r)/5;
+        if(headingOnlyMode==1)
+            avoidDist = (norm(detect_nearest_obstacle(x,collisionnedObstacle)-x(1:2))+rq+r)/5;
+        else
+            avoidDist = (norm(collisionnedObstacle-x(1:2))+rq+r)/5;
+        end
         startCollLine = avoidDist*[cos(x(3)+pi);sin(x(3)+pi)]+x(1:2);            
 
 %             a1 = startCollLine;
@@ -32,5 +42,9 @@ function [avoidCollisionPoint,followedLine,avoidMode,Z] = avoid_obstacle(avoidMo
 %             qhat=[];
 %             Z1=calculate_potField(P1a,P2a,x,phat,qhat,psi); %Just for drawing
 %             qhat=qhat2;
+    end
+    if(headingOnlyMode==1)
+        qhat = []; % Permet la redétection, du coup il garde pas 
+                   % les obstacles en mémoire
     end
 end

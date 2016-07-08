@@ -9,7 +9,7 @@ function qhat = update_obstacles(qhat,detectedObstacles,x,distDetect,angleDetect
 
         % qhat(:,i) does not belong to detectedObstacles
         if(isempty(detectedObstacles)==0)
-            qhatBelongs2DetObs = isempty(find(detectedObstacles(1)==qhat(1,i))==find(detectedObstacles(1)==qhat(1,i)));
+            qhatBelongs2DetObs = isempty(find(detectedObstacles(1)==qhat(1,i))==find(detectedObstacles(2)==qhat(2,i)));
         else
             qhatBelongs2DetObs = 1;
         end

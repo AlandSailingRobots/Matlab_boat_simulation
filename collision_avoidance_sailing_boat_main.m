@@ -148,7 +148,7 @@ function collision_avoidance_sailing_boat_main
 %         plot([x(1);xngzOUT2(1)],[x(2);xngzOUT2(2)],'black','Linewidth',2);
         
         %% WantedHeading
-        draw_arrow(x(1),x(2),thetabar,20,'black');
+%         draw_arrow(x(1),x(2),thetabar,20,'black');
         
         %% Detectionsquare
         if(followedLine(:,1)~=avoidCollisionPoint)
@@ -185,13 +185,15 @@ function collision_avoidance_sailing_boat_main
         xdot=([dx;dy;dtheta;dv;dw]);       
     end
     %Mock detection return the detected obstacle when the boat is going toward the obstacle
-    function detectedObstacles = obstacle_detection(x,posObstacles,distDetect,angleDetect)
+    function [detectedObstacles,bearingDetectedObstacle] = obstacle_detection(x,posObstacles,distDetect,angleDetect)
         detectedObstacles = [];
+        bearingDetectedObstacle = [];
         for i=1:size(posObstacles,2)
             if(sqrt((posObstacles(1,i)-x(1))^2+(posObstacles(2,i)-x(2))^2) < distDetect)
                 theta0 = atan2((posObstacles(2,i)-x(2)),(posObstacles(1,i)-x(1))) - (mod(x(3)+pi,2*pi)-pi);%To check if the boat is heading toward the obstacle.
                 if(abs(theta0)<=angleDetect)
                     detectedObstacles = [detectedObstacles posObstacles(:,i)];
+                    bearingDetectedObstacle = theta0;
                 end
             end
         end    
@@ -201,7 +203,8 @@ function collision_avoidance_sailing_boat_main
             ( sqrt( (x(1)-posWaypoints(1,size(posWaypoints,2)))^2 + ...
                     (x(2)-posWaypoints(2,size(posWaypoints,2)))^2) < r ...
             ) ...
-          )
+          ) % if the boat is next to the objective or an obstacle is too 
+            % close to the current objective
             play = 0;
         else
             play = 1;
@@ -245,6 +248,9 @@ function collision_avoidance_sailing_boat_main
     avoidMode = 0;% Mode. When i=0 the boat is heading toward its target. 
                   % When i=1 the boat is following a trajectory in order to avoid an object.
     is_obstacle_detected = 1;
+    headingOnlyMode=1;% If =1 the boat is only detecting the direction of the obstacle
+    haveToAvoidObstacle = 0;%In headingMode only, should the boat pass in avoiding mode?
+    bearingDetectedObstacle = [];%Used in headingMode only,
     
     % Init follow line mode
     NGZmode = 0;  % No-go zone mode is active when the wanted heading in inside the no-go zone. 
@@ -291,7 +297,7 @@ function collision_avoidance_sailing_boat_main
 %     posObstacles = [50 10 45 80;
 %                     50 10 65 75];
     posObstacles = create_wall([-10;-10],...
-                               [ 10; 10],0.5); % Real points to avoid
+                               [ 0; 0],0.5); % Real points to avoid
 %     posObstacles = [0;0];
 
 
@@ -332,7 +338,8 @@ function collision_avoidance_sailing_boat_main
     
     dim = [xmin xmax ymin ymax];
     sailingZoneMatrix = getSailingZoneMatrix(sailingZone,P1,P2,dim);
-    Z=calculate_potField(P1,P2,x,phat,qhat,sailingZoneMatrix,psi);
+    Z=calculate_potField(haveToAvoidObstacle,headingOnlyMode,P1,P2,x,...
+            phat,qhat,rq,bearingDetectedObstacle,sailingZoneMatrix,psi);
     
     % -- Time --
     t=0;
@@ -349,18 +356,29 @@ function collision_avoidance_sailing_boat_main
     
     while(play==1)        
         % Obstacle detection
-        detectedObstacles = obstacle_detection(x,posObstacles,distDetect,angleDetect);  
+        [detectedObstacles,bearingDetectedObstacle] = obstacle_detection(x,posObstacles,distDetect,angleDetect);  
         qhat = update_obstacles(qhat,detectedObstacles,x,distDetect,angleDetect); % cleaning added
         % The sensors check if a obstacle is detected, then add its coordinates
         % to the obstacle database (=qhat)
-        [collisionnedObstacle,avoidMode,is_obstacle_detected] = boat_on_collision_course(x,qhat,rq,r,avoidMode,is_obstacle_detected);
+        [collisionnedObstacle,avoidMode,...
+         is_obstacle_detected,haveToAvoidObstacle...
+        ] ...
+        = boat_on_collision_course ...
+            (x,qhat,rq,r,detectedObstacles,avoidMode,is_obstacle_detected,headingOnlyMode);
              
         % Path following (Waypoint system)
-        [nWayP,phat,followedLine,avoidMode]=next_waypoint(x,phat,followedLine,avoidMode,collisionnedObstacle,posWaypoints,nWayP,r);
+        [nWayP,phat,followedLine,avoidMode] = next_waypoint ...
+            (x,phat,followedLine,avoidMode,collisionnedObstacle, ...
+             posWaypoints,nWayP,r ...
+            );
         play = checkEndSimu(x,phat,posWaypoints,r);
         
         % Avoid script
-        [avoidCollisionPoint,followedLine,avoidMode,Z] = avoid_obstacle(avoidMode, followedLine, collisionnedObstacle,avoidCollisionPoint,sailingZoneMatrix,qhat,phat,x,P1,P2,psi,rq,r,dim,Z); % using global var
+        [avoidCollisionPoint,followedLine,avoidMode,Z] = avoid_obstacle ...
+            (haveToAvoidObstacle,headingOnlyMode, avoidMode, followedLine, ...
+             collisionnedObstacle,bearingDetectedObstacle,avoidCollisionPoint,sailingZoneMatrix,...
+             qhat,phat,x,P1,P2,psi,rq,r,dim,Z ...
+            ); % using global var
         
         % Command
         [u,q,NGZmode]=follow_line(x,q,psi,followedLine,NGZmode);
