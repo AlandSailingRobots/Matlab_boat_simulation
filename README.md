@@ -26,13 +26,14 @@ ___________
 
 4. Explanation of the variables : 
 
-	r    : the radius of the channel where the boat is authorised to tack. (meters)
-	rq   : the security radius of obstacles (meters)
-	phat : the current objective (coordinates in meters)
-	qhat : the list of obstacles (coordinates in meters)
+  r    : the radius of the channel where the boat is authorised to tack. (meters)
+  rq   : the security radius of obstacles (meters)
+  phat : the current objective (coordinates in meters)
+  qhat : the list of obstacles (coordinates in meters)
+	
 ___________
 
-5.  Remarks
+5. Remarks
 
 - The computation of the sailingZone is only done once in the variable initialization to reduce the computation time.
 
