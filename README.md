@@ -27,20 +27,21 @@ them inside the function follow_line.m.
 ___________
 
 Explanation of the variables : 
-	r    : the radius of the channel where the boat is authorised to tack. (meters)
+	r    : the radius of the channel where the boat is authorised 
+           to tack. (meters)
 	rq   : the security radius of obstacles (meters)
 	phat : the current objective (coordinates in meters)
 	qhat : the list of obstacles (coordinates in meters)
 ___________
 
 Remarks
-      - The computation of the sailingZone is only done once in the variable initialization
-  	to reduce the computation time.
+      - The computation of the sailingZone is only done once in the variable 
+    initialization to reduce the computation time.
 
-      - There is a lost of input into the different functions, this is normal. 
+      - There is a lot of input into the different functions, this is normal. 
 	This is to be able to modify most of the values from the main. 
-	There is no global variables. This is to be able to see what is exactly the input
-	of each function.
+	There is no global variables. This is to be able to see what is exactly 
+    the input of each function.
 	
 ___________
 
@@ -55,3 +56,5 @@ Update notes :
 		 - boat_on_collision_course
 		 - avoid_mode
 		 - calculate_potField
+        Use of detect_nearest_obstacle to fix the issue on collisionnedObstacle
+        Currently the boat in bearing only mode is sailing through a wall of obstacle
