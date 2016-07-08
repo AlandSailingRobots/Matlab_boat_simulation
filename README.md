@@ -12,24 +12,24 @@ ___________
 
 2. To setup waypoints :
 
-* Use click_to_pos.m and modify
-  - **waypoints.mat** for waypoints
-  - **sailing_zone.mat** for the sailing_zone borders
-  - **obstacles.mat** for the obstacles. When the matrix is created, it appear in the map folder. You need to move it to the **Waypoint_matrix_and_associated_tools folder**.
+ * Use click_to_pos.m and modify
+   - **waypoints.mat** for waypoints
+   - **sailing_zone.mat** for the sailing_zone borders
+   - **obstacles.mat** for the obstacles. When the matrix is created, it appear in the map folder. You need to move it to the **Waypoint_matrix_and_associated_tools folder**.
 
   Or change it in the code in collision_avoidance_sailing_boat_main.m in the world variables section.
 ___________
 
-3. To modify values for the following_line algorithm you need to modify 
-them inside the function **follow_line.m**.
+3. To modify values for the following_line algorithm you need to modify them inside the function **follow_line.m**.
 ___________
 
 4. Explanation of the variables : 
-
-	r    : the radius of the channel where the boat is authorised to tack. (meters)
-	rq   : the security radius of obstacles (meters)
-	phat : the current objective (coordinates in meters)
-	qhat : the list of obstacles (coordinates in meters)
+```
+    r    : the radius of the channel where the boat is authorised to tack. (meters)  
+    rq   : the security radius of obstacles (meters)  
+    phat : the current objective (coordinates in meters)  
+    qhat : the list of obstacles (coordinates in meters)  
+```
 ___________
 
 5.  Remarks
