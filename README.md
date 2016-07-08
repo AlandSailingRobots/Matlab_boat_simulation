@@ -41,3 +41,17 @@ Remarks
 	This is to be able to modify most of the values from the main. 
 	There is no global variables. This is to be able to see what is exactly the input
 	of each function.
+	
+___________
+
+Update notes : 
+	
+08/07/2016 
+	 - Upload of the code to a remote repository
+	 
+	 - Merge with Heading Only Mode code
+		Function changed by the heading only mode : 
+		 - main
+		 - boat_on_collision_course
+		 - avoid_mode
+		 - calculate_potField
