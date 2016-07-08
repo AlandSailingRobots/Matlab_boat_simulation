@@ -43,7 +43,8 @@ ___________
 ## Update notes : 
 	
 08/07/2016 
-
-	 - Upload of the code to a remote repository
-
-     - Backup version
+```
+	- Upload of the code to a remote repository
+	
+	- Backup version
+```
