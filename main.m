@@ -1,9 +1,17 @@
 path(path,'C:\matlab_sailing\GitRepo\Matlab_boat_simulation\Matlab-files\2 Egen regulator');
 path(path,'C:\matlab_sailing\GitRepo\Matlab_boat_simulation\new');
 path(path,'C:\matlab_sailing\GitRepo\Matlab_boat_simulation\GPS_POS');
+
 path(path,'C:\matlab_sailing\GitRepo\Matlab_boat_simulation\collision_avoidance/Tools');
 path(path,'C:\matlab_sailing\GitRepo\Matlab_boat_simulation\collision_avoidance/Sensors_and_OnboardTools');
 path(path,'C:\matlab_sailing\GitRepo\Matlab_boat_simulation\collision_avoidance/Control');
+path(path,'C:\matlab_sailing\GitRepo\Matlab_boat_simulation\collision_avoidance/Waypoint_matrix_and_associated_tools');
+
+path(path,'C:\matlab_sailing\GitRepo\Matlab_boat_simulation\collision_avoidance_bearing_only/Tools');
+path(path,'C:\matlab_sailing\GitRepo\Matlab_boat_simulation\collision_avoidance_bearing_only/Sensors_and_OnboardTools');
+path(path,'C:\matlab_sailing\GitRepo\Matlab_boat_simulation\collision_avoidance_bearing_only/Control');
+path(path,'C:\matlab_sailing\GitRepo\Matlab_boat_simulation\collision_avoidance_bearing_only/Waypoint_matrix_and_associated_tools');
+
 theta = wrapToPi(pi/2-theta/180*pi);
 delay = 2; %smith delay in seconds 
 size_buffer_delay = 500;
@@ -135,7 +143,7 @@ if obstacle_mode==1
     delta_r = u(1);
     delta_s = u(2);
 elseif(obstacle_mode==2)
-    %% obstacle avoidance
+    %% obstacle avoidance bearing only
     % [delta_r, delta_s, q, tacking] = controller_simpleLine_v_control(m, theta,v,q, psi_tw,a,b,tacking);
     % delta_r = delta_r/2;
 
