@@ -5,11 +5,11 @@ function qhat = update_obstacles(qhat,detectedObstacles,x,distDetect,angleDetect
     % Cleaning
     i = 1;
     while i<=size(qhat,2);
-        T = atan2((qhat(2,i)-x(2)),(qhat(1,i)-x(1)))-x(3);
+        T = atan2((qhat(2,i)-x(2)),(qhat(1,i)-x(1)))-(mod(x(3)+pi,2*pi)-pi);
 
         % qhat(:,i) does not belong to detectedObstacles
         if(isempty(detectedObstacles)==0)
-            qhatBelongs2DetObs = isempty(find(detectedObstacles(1)==qhat(1,i))==find(detectedObstacles(1)==qhat(1,i)));
+            qhatBelongs2DetObs = isempty(find(detectedObstacles(1)==qhat(1,i))==find(detectedObstacles(2)==qhat(2,i)));
         else
             qhatBelongs2DetObs = 1;
         end

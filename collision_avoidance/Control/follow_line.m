@@ -1,5 +1,5 @@
 % This function follow the line define with a and b
-function [u,q,tacking] = follow_line(x,q, psi, followedLine,tacking)
+function [u,q,tacking,theta_star] = follow_line(x,q, psi, followedLine,tacking)
         
         %controller_simpleLine Simple line following controller
         %   Controller based on the paper "A simple controller for line
@@ -18,7 +18,12 @@ function [u,q,tacking] = follow_line(x,q, psi, followedLine,tacking)
         
         %Step 3
         phi = atan2((b(2)-a(2)),(b(1)-a(1)));
-        
+        if(abs(angDiff(atan2(m(2)-b(2),m(1)-b(1)),phi))<pi/2);
+            b = followedLine(:,1);
+            a = followedLine(:,2);
+            phi = atan2((b(2)-a(2)),(b(1)-a(1)));
+        end
+
         %Step 1
         u = 1./hypot(b(1)-a(1),b(2)-a(2)).*[b(1)-a(1) b(2)-a(2)];
         v = [m(1)-a(1) m(2)-a(2)];
@@ -27,30 +32,23 @@ function [u,q,tacking] = follow_line(x,q, psi, followedLine,tacking)
         %Step 2
         if (abs(e) > r)
             q = sign(e);
+%             q = sign(theta-(mod(psi,pi)-pi));
         end
-        
+
         %Step 4
         theta_star = phi-2*gamma/pi*atan(e/r); %take care of the incidence angle
         
         %Step 5-9
-        %Boat left or right of the channel limit
-        T = atan2(b(2)-a(2),b(1)-a(1));
-        aB = a+[sign(e)*r*cos(T);sign(e)*r*sin(T)];
-        bB = b+[sign(e)*r*cos(T);sign(e)*r*sin(T)];
-        uB = 1./hypot(bB(1)-aB(1),bB(2)-aB(2)).*[bB(1)-aB(1) bB(2)-aB(2)];
-        vB = [m(1)-aB(1) m(2)-aB(2)];
-        eB = uB(1)*vB(2)-vB(1)*uB(2);
-        
-        if ( (cos(psi-theta_star)+cos(ngzAngle) < 0) || ...
-             ( (( (sign(eB)*sign(e)<0)&&(abs(e)<r) )||( (sign(eB)*sign(e)>0)&&(abs(e)<(r+sign(e)*5)) )) && ...
-               (cos(psi-phi)+cos(ngzAngle)<0) ... 
-             ) ... 
+
+        if ( ((cos(psi-theta_star)+cos(ngzAngle+pi/8) < 0)&&(tacking)) || ... % leaving the NGZ
+              (cos(psi-theta_star)+cos(ngzAngle) < 0) || ... % entering the NGZ
+             (cos(psi-phi)+cos(ngzAngle)<0) ...  
            )
             if ~tacking
-                v2 = [m(1)+2000*r*cos(theta+pi)-a(1) m(2)+2000*r*sin(theta+pi)-a(2)];
-%                 v2 = [m(1)+100*cos(theta+pi)-a(1) m(2)+100*sin(theta+pi)-a(2)];
-                e2 = u(1)*v2(2)-v2(1)*u(2);
-                q = sign(e2);
+%                 v2 = [m(1)+2000*r*cos(theta+pi)-a(1) m(2)+2000*r*sin(theta+pi)-a(2)];
+%                 e2 = u(1)*v2(2)-v2(1)*u(2);
+%                 q = sign(e2);
+                q = sign(theta-(mod(psi,pi)-pi));
                 tacking = 1;
             end
             theta_bar = pi + psi - q*ngzAngle;

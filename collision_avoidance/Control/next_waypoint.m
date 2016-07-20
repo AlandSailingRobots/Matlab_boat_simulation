@@ -2,7 +2,7 @@
 function [nWayP,phat,followedLine,avoidMode]=next_waypoint(x,phat,followedLine,avoidMode,collisionnedObstacle,posWaypoints,nWayP,r)
     % followedLine(:,1) = a1;
     % followedLine(:,2) = b1;
-    if((sqrt((x(1)-phat(1))^2+(x(2)-phat(2))^2)<r)||((isempty(collisionnedObstacle)==0)&&(norm(phat-collisionnedObstacle)<r)) )%update the waypoint to reach if the previous one has been reached
+    if((sqrt((x(1)-phat(1))^2+(x(2)-phat(2))^2)<r)||((isempty(collisionnedObstacle)==0)&&(detect_nearest_obstacle(phat,collisionnedObstacle)<r)) )%update the waypoint to reach if the previous one has been reached
         % If the boat reach the objective or some obstacles are too
         % close, the next waypoint is called
         nWayP=nWayP+1;
