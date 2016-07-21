@@ -7,7 +7,7 @@ function [collisionnedObstacle,avoidMode,is_obstacle_detected,haveToAvoidObstacl
         boatHeading = mod(x(3),2*pi);
         obstacleHeading = mod(atan2(qhat(2,i)-x(2),qhat(1,i)-x(1)),2*pi);
         bool = abs(boatHeading-obstacleHeading) < coneAngle;
-        if((abs(boatHeading-obstacleHeading) < coneAngle) && (distBoatObstacle < (r*2)) && (x(4)>1)) % Trajectory will cross the security perimeter
+        if((abs(boatHeading-obstacleHeading) < coneAngle) && (distBoatObstacle < (r*2+5)) && (x(4)>0.5)) % Trajectory will cross the security perimeter
             collisionnedObstacle = qhat(:,i);
         end   
     end

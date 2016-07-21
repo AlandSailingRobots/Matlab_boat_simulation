@@ -6,7 +6,7 @@ function Y = heaviside(X)
 
 %   Copyright 1993-2012 The MathWorks, Inc.
 
-Y = zeros(size(X),'like',X);
+Y = zeros(size(X));
 Y(X > 0) = 1;
 Y(X == 0) = .5;
 Y(isnan(X)) = NaN;

@@ -21,7 +21,7 @@
                 strengthHoles = 2;
                 strengthPike = 4;
                 strength = 5;
-                offsetObstacle = 15;
+                offsetObstacle = 10;
                 % Add the pikes
                 for i=1:size(qhat,2)
                     xObs = P1-qhat(1,i);
@@ -56,7 +56,7 @@
                 xb =  x1*cos(bearingObstacle) + y1*sin(bearingObstacle);
                 yb = -x1*sin(bearingObstacle) + y1*cos(bearingObstacle);
 %                 intero=rectangularPulse(-lengthObstacle,lengthObstacle,xb);
-                ObsP = 15*rectangularPulse(-lengthObstacle,lengthObstacle,xb).*heaviside(yb)-5*rectangularPulse(-lengthObstacle*2,lengthObstacle*2,xb).*heaviside(yb);
+                ObsP = (15*rectangularPulse(2*lengthObstacle,xb)-5*rectangularPulse(lengthObstacle*4,xb)).*heaviside(yb);
             end
         end
 

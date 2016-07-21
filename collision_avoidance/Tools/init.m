@@ -1,5 +1,5 @@
 function init
-    close all; clearvars; clc;
+    close all; clear vars; clc;
     W = get(0,'MonitorPositions'); % plein ecran
     if(size(W,1)<2)
         figure('Position',[0 0 W(3) W(4)]);

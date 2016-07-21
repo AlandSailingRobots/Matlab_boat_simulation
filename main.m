@@ -42,7 +42,7 @@ X = [m(1) m(2) theta v]; % states used by controller
 W = [psi_tw a_tw]; % True wind from filter
 
 if ~exist('gps_waypoint','var')
-   load('gps_point-moreclose_harbour.mat')
+   load('waypoints.mat')
    gps_waypoint = [utm_x - start_x,utm_y - start_y]
    y_prediction = [X 0]';
    j=0;

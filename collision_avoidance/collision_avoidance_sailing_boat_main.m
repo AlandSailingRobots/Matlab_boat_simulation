@@ -16,7 +16,7 @@ function collision_avoidance_sailing_boat_main
        e=0.2;
        M1=L*[  0  1  1-e 1 1-e ; 
              0  0   -e 0  e ];
-       M =[  M1  ; 1 1 1 1 1];  
+       M = [M1  ; 1 1 1 1 1];  
        R=[cos(theta),-sin(theta),x;sin(theta),cos(theta),y;0 0 1];    
        M =R*M;
        plot(M(1,:),M(2,:),color);       
@@ -44,7 +44,7 @@ function collision_avoidance_sailing_boat_main
         end
         figure(1);
         if(personMode==3)
-            viewRadius = 40;
+            viewRadius = 100;
             axis([x(1)-viewRadius,x(1)+viewRadius,x(2)-viewRadius,x(2)+viewRadius]); hold on; axis image;
         else
             axis([xmin,xmax,ymin,ymax]); hold on; axis image;
@@ -125,10 +125,10 @@ function collision_avoidance_sailing_boat_main
         end
     
         %% Sensor
-        xrange1=x(1:2)+10*[cos(theta+angleDetect);sin(theta+angleDetect)];
-        xrange2=x(1:2)+10*[cos(theta-angleDetect);sin(theta-angleDetect)];
-        plot([x(1);xrange1(1)],[x(2);xrange1(2)],'green','Linewidth',2);
-        plot([x(1);xrange2(1)],[x(2);xrange2(2)],'green','Linewidth',2);
+        xrange1=x(1:2)+distDetect*[cos(theta+angleDetect);sin(theta+angleDetect)];
+        xrange2=x(1:2)+distDetect*[cos(theta-angleDetect);sin(theta-angleDetect)];
+        plot([x(1);xrange1(1)],[x(2);xrange1(2)],'green','Linewidth',1);
+        plot([x(1);xrange2(1)],[x(2);xrange2(2)],'green','Linewidth',1);
 
         %% no-go zone
         xngzIN1=x(1:2)+10*[cos(psi+pi+ngzAngle);sin(psi+pi+ngzAngle)];
@@ -248,7 +248,7 @@ function collision_avoidance_sailing_boat_main
     avoidMode = 0;% Mode. When i=0 the boat is heading toward its target. 
                   % When i=1 the boat is following a trajectory in order to avoid an object.
     is_obstacle_detected = 1;
-    headingOnlyMode=1;% If =1 the boat is only detecting the direction of the obstacle
+    headingOnlyMode = 1;% If =1 the boat is only detecting the direction of the obstacle
     haveToAvoidObstacle = 0;%In headingMode only, should the boat pass in avoiding mode?
     bearingDetectedObstacle = [];%Used in headingMode only,
     
@@ -259,7 +259,7 @@ function collision_avoidance_sailing_boat_main
                   % far from the no-go zone.
     
     % Init sensors
-    distDetect = 10; angleDetect = pi/8;     
+    distDetect = 20; angleDetect = pi/4;     
     
     %% ---- World variables ---- 
     
@@ -288,9 +288,9 @@ function collision_avoidance_sailing_boat_main
          gps_absolute_obstacles.utm_y - gps_start_y];
     
     % -- For other simulations --
-%     posWaypoints = gps_waypoints;
-    posWaypoints=[10 -20 ; %chain of waypoints
-                  0 0];
+    posWaypoints = gps_waypoints;
+%     posWaypoints=[10 -20 ; %chain of waypoints
+%                   0   0];
 %     posWaypoints=[ 30 -40 -20; %chain of waypoints
 %                    0   5 -15];
 
@@ -299,9 +299,9 @@ function collision_avoidance_sailing_boat_main
         
     % -- Obstacle --
     
-%     posObstacles = gps_obstacles';
-    posObstacles = [50 10 45 80;
-                    50 10 65 75];
+    posObstacles = gps_obstacles;
+%     posObstacles = [50 10 45 80;
+%                     50 10 65 75];
 %     posObstacles = create_wall([-10;-10],...
 %                                [ 0; 0],0.5); % Real points to avoid
 %     posObstacles = [0;0];
@@ -321,9 +321,9 @@ function collision_avoidance_sailing_boat_main
     
     % -- Sailing zone --
     % turn clockwise for the points
-%     sailingZone = gps_sailing_zone;
-    sailingZone = [-50 -50 50  50 ;
-                   -50  50 50 -50];
+    sailingZone = gps_sailing_zone;
+%     sailingZone = [-50 -50 50  50 ;
+%                    -50  50 50 -50];
           
     % -- Objective --
     phat=posWaypoints(:,1); % Current objective   
@@ -436,6 +436,6 @@ function collision_avoidance_sailing_boat_main
             posObstacles = moveObstacle(posObstacles,movingObstacles,vObs,dt);
         end
         x=x+f(x,u)*dt;
-        draw(1,1); % Most of the needed variables are global for the drawing
+        draw(1,3); % Most of the needed variables are global for the drawing
     end
 end

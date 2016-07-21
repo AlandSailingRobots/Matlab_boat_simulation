@@ -1,4 +1,4 @@
-clearvars;
+clear all;
 addpath('Maps');
 
 [FileName,PathName] = uigetfile('*.jpg','Select the image to get gps points');
