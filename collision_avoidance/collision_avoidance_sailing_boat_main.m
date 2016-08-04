@@ -1,6 +1,6 @@
 function collision_avoidance_sailing_boat_main
     %% File path init
-    addpath('Control','Sensors_and_onBoardTools','Tools','Waypoint_matrix_and_associated_tools')
+    addpath('Control','Sensors_and_onBoardTools','Tools','Waypoint_matrix_and_associated_tools','Simulation')
     
     %% Drawings
     function draw_circle(c,r,color1,linewidth1)
@@ -184,20 +184,7 @@ function collision_avoidance_sailing_boat_main
         dw=(1/p10)*((p6-p7*cos(deltas))*fs-p8*cos(deltar)*fr-p3*w*v);
         xdot=([dx;dy;dtheta;dv;dw]);       
     end
-    %Mock detection return the detected obstacle when the boat is going toward the obstacle
-    function [detectedObstacles,bearingDetectedObstacle] = obstacle_detection(x,posObstacles,distDetect,angleDetect)
-        detectedObstacles = [];
-        bearingDetectedObstacle = [];
-        for i=1:size(posObstacles,2)
-            if(sqrt((posObstacles(1,i)-x(1))^2+(posObstacles(2,i)-x(2))^2) < distDetect)
-                theta0 = atan2((posObstacles(2,i)-x(2)),(posObstacles(1,i)-x(1))) - (mod(x(3)+pi,2*pi)-pi);%To check if the boat is heading toward the obstacle.
-                if(abs(theta0)<=angleDetect)
-                    detectedObstacles = [detectedObstacles posObstacles(:,i)];
-                    bearingDetectedObstacle = theta0;
-                end
-            end
-        end    
-    end
+
     function play = checkEndSimu(x,phat,posWaypoints,r)
         if( ( all(phat == posWaypoints(:,size(posWaypoints,2))) ) && ...
             ( sqrt( (x(1)-posWaypoints(1,size(posWaypoints,2)))^2 + ...
